@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -10,7 +11,15 @@ namespace Application.Activities
     {
         public class Command : IRequest
         {
-            public Activity Activity {get;set;}
+            public Activity Activity { get; set; }
+        }
+
+        public class CommandValidators : AbstractValidator<Command>
+        {
+            public CommandValidators()
+            {
+                RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -25,7 +34,7 @@ namespace Application.Activities
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 _context.Activities.Add(request.Activity);
-                
+
                 await _context.SaveChangesAsync();
 
                 return Unit.Value;
