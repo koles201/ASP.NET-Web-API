@@ -8,6 +8,7 @@ import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import TestErrors from "../../features/errors/TestError";
 import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
+import ServerError from "../../features/errors/ServerError";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route key={i} path={path} element={<ActivityForm key={i} />} />
           ))}
           <Route path="/errors" element={<TestErrors />}></Route>
+          <Route path="/server-error" element={<ServerError />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
