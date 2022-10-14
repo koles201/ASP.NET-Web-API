@@ -5,6 +5,7 @@ import { Button, Form, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import { v4 as uuid } from "uuid";
+import { Formik } from "formik";
 
 export default observer(function ActivityForm() {
   const { activityStore } = useStore();
@@ -34,80 +35,93 @@ export default observer(function ActivityForm() {
     }
   }, [id, loadActivity]);
 
-  const handleSubmit = () => {
-    if (activity.id) {
-      updateActivity(activity);
-      navigate(`/activities/${activity.id}`);
-    } else {
-      const newActivity = {
-        ...activity,
-        id: uuid(),
-      };
+  // const handleSubmit = () => {
+  //   if (activity.id) {
+  //     updateActivity(activity);
+  //     navigate(`/activities/${activity.id}`);
+  //   } else {
+  //     const newActivity = {
+  //       ...activity,
+  //       id: uuid(),
+  //     };
 
-      createActivity(newActivity);
-      navigate(`/activities/${newActivity.id}`);
-    }
-  };
+  //     createActivity(newActivity);
+  //     navigate(`/activities/${newActivity.id}`);
+  //   }
+  // };
 
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setActivity({ ...activity, [name]: value });
-  };
+  // const handleChange = (
+  //   event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = event.target;
+  //   setActivity({ ...activity, [name]: value });
+  // };
 
   if (loadingInitial) return <LoadingComponent content="Loading activity..." />;
 
   return (
     <Segment clearing>
-      <Form>
-        <Form.Input
-          placeholder="Title"
-          value={activity.title}
-          name="title"
-          onChange={handleInputChange}
-        />
-        <Form.TextArea
-          placeholder="Description"
-          value={activity.description}
-          name="description"
-          onChange={handleInputChange}
-        />
-        <Form.Input
-          placeholder="Category"
-          value={activity.category}
-          name="category"
-          onChange={handleInputChange}
-        />
-        <Form.Input
-          placeholder="Date"
-          type="date"
-          value={activity.date}
-          name="date"
-          onChange={handleInputChange}
-        />
-        <Form.Input
-          placeholder="City"
-          value={activity.city}
-          name="city"
-          onChange={handleInputChange}
-        />
-        <Form.Input
-          placeholder="Venue"
-          value={activity.venue}
-          name="venue"
-          onChange={handleInputChange}
-        />
-        <Button
-          floated="right"
-          positive
-          type="submit"
-          content="Submit"
-          loading={loading}
-          onClick={handleSubmit}
-        />
-        <Button as={Link} to="/activities" floated="right" type="button" content="Cancel" />
-      </Form> 
+      <Formik
+        enableReinitialize
+        initialValues={activity}
+        onSubmit={(values) => console.log(values)}
+      >
+        {({ values: activity, handleChange, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Form.Input
+              placeholder="Title"
+              value={activity.title}
+              name="title"
+              onChange={handleChange}
+            />
+            <Form.TextArea
+              placeholder="Description"
+              value={activity.description}
+              name="description"
+              onChange={handleChange}
+            />
+            <Form.Input
+              placeholder="Category"
+              value={activity.category}
+              name="category"
+              onChange={handleChange}
+            />
+            <Form.Input
+              placeholder="Date"
+              type="date"
+              value={activity.date}
+              name="date"
+              onChange={handleChange}
+            />
+            <Form.Input
+              placeholder="City"
+              value={activity.city}
+              name="city"
+              onChange={handleChange}
+            />
+            <Form.Input
+              placeholder="Venue"
+              value={activity.venue}
+              name="venue"
+              onChange={handleChange}
+            />
+            <Button
+              floated="right"
+              positive
+              type="submit"
+              content="Submit"
+              loading={loading}
+            />
+            <Button
+              as={Link}
+              to="/activities"
+              floated="right"
+              type="button"
+              content="Cancel"
+            />
+          </Form>
+        )}
+      </Formik>
     </Segment>
   );
 });
