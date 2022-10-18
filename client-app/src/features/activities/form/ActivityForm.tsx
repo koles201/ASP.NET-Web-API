@@ -1,11 +1,16 @@
 import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Form, Segment } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import { v4 as uuid } from "uuid";
-import { Formik } from "formik";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyTextArea from "../../../app/common/form/MyTextArea";
+import MySelectInput from "../../../app/common/form/MySelectInput";
+import { categoryOptions } from "../../../app/common/options/categoryOptions";
 
 export default observer(function ActivityForm() {
   const { activityStore } = useStore();
@@ -27,6 +32,15 @@ export default observer(function ActivityForm() {
     date: "",
     city: "",
     venue: "",
+  });
+
+  const validationSchema = Yup.object({
+    title: Yup.string().required("The activity title is required"),
+    description: Yup.string().required("The activity descriptin is required"),
+    category: Yup.string().required(),
+    date: Yup.string().required(),
+    venue: Yup.string().required(),
+    city: Yup.string().required(),
   });
 
   useEffect(() => {
@@ -62,49 +76,23 @@ export default observer(function ActivityForm() {
   return (
     <Segment clearing>
       <Formik
+        validationSchema={validationSchema}
         enableReinitialize
         initialValues={activity}
         onSubmit={(values) => console.log(values)}
       >
-        {({ values: activity, handleChange, handleSubmit }) => (
-          <Form onSubmit={handleSubmit}>
-            <Form.Input
-              placeholder="Title"
-              value={activity.title}
-              name="title"
-              onChange={handleChange}
-            />
-            <Form.TextArea
-              placeholder="Description"
-              value={activity.description}
-              name="description"
-              onChange={handleChange}
-            />
-            <Form.Input
+        {({ handleSubmit }) => (
+          <Form className="ui form" onSubmit={handleSubmit}>
+            <MyTextInput placeholder="Title" name="title" />
+            <MyTextArea rows={3} placeholder="Description" name="description" />
+            <MySelectInput
+              options={categoryOptions}
               placeholder="Category"
-              value={activity.category}
               name="category"
-              onChange={handleChange}
             />
-            <Form.Input
-              placeholder="Date"
-              type="date"
-              value={activity.date}
-              name="date"
-              onChange={handleChange}
-            />
-            <Form.Input
-              placeholder="City"
-              value={activity.city}
-              name="city"
-              onChange={handleChange}
-            />
-            <Form.Input
-              placeholder="Venue"
-              value={activity.venue}
-              name="venue"
-              onChange={handleChange}
-            />
+            <MyTextInput placeholder="Date" name="date" />
+            <MyTextInput placeholder="City" name="city" />
+            <MyTextInput placeholder="Venue" name="venue" />
             <Button
               floated="right"
               positive
