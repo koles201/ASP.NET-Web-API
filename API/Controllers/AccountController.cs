@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +15,17 @@ namespace API.Controllers
 
         private readonly SignInManager<AppUser> _signInManager;
 
+        private readonly TokenService _tokenService;
+
         public AccountController(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager
+            SignInManager<AppUser> signInManager,
+            TokenService tokenService
         )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost("login")]
@@ -46,7 +48,7 @@ namespace API.Controllers
                 {
                     DisplayName = user.DisplayName,
                     Image = null,
-                    Token = "Token",
+                    Token = _tokenService.CreateToken(user),
                     UserName = user.UserName
                 };
             }
