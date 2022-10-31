@@ -65,7 +65,7 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                ModelState.AddModelError("error", "Error taken");
+                ModelState.AddModelError("error", "Email taken");
                 return ValidationProblem();
             }
 
@@ -85,7 +85,7 @@ namespace API.Controllers
             var result = await _userManager.CreateAsync(user, registerDto.Password);
             if (result.Succeeded)
             {
-                CreateUserObject(user);
+                return CreateUserObject(user);
             }
 
             return BadRequest("Problem registrating user");
