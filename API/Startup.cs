@@ -1,19 +1,14 @@
 using API.Extensions;
 using API.Middleware;
 using Application.Activities;
-using Application.Core;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Persistence;
 
 namespace API
 {
@@ -32,7 +27,9 @@ namespace API
             services
                 .AddControllers(opt =>
                 {
-                    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
                     opt.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .AddFluentValidation(config =>
