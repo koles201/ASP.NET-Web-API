@@ -12,29 +12,18 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import { categoryOptions } from "../../../app/common/options/categoryOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 
 export default observer(function ActivityForm() {
   const { activityStore } = useStore();
   const navigate = useNavigate();
-  const {
-    loadActivity,
-    createActivity,
-    updateActivity,
-    loading,
-    loadingInitial,
-  } = activityStore;
+  const { loadActivity, createActivity, updateActivity, loadingInitial } =
+    activityStore;
   const { id } = useParams();
 
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    description: "",
-    category: "",
-    date: null,
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(
+    new ActivityFormValues()
+  );
 
   const validationSchema = Yup.object({
     title: Yup.string().required("The activity title is required"),
@@ -47,22 +36,24 @@ export default observer(function ActivityForm() {
 
   useEffect(() => {
     if (id) {
-      loadActivity(id).then((a) => setActivity(a!));
+      loadActivity(id).then((a) => setActivity(new ActivityFormValues(a)!));
     }
   }, [id, loadActivity]);
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
     if (activity.id) {
-      updateActivity(activity);
-      navigate(`/activities/${activity.id}`);
+      updateActivity(activity).then(() =>
+        navigate(`/activities/${activity.id}`)
+      );
     } else {
       const newActivity = {
         ...activity,
         id: uuid(),
       };
 
-      createActivity(newActivity);
-      navigate(`/activities/${newActivity.id}`);
+      createActivity(newActivity).then(() =>
+        navigate(`/activities/${newActivity.id}`)
+      );
     }
   };
 
@@ -101,7 +92,7 @@ export default observer(function ActivityForm() {
               positive
               type="submit"
               content="Submit"
-              loading={loading}
+              loading={isSubmitting}
               disabled={isSubmitting || !dirty || !isValid}
             />
             <Button
