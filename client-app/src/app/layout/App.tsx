@@ -14,6 +14,7 @@ import { useStore } from "../stores/store";
 import { useEffect } from "react";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 function App() {
   const { commonStore, userStore } = useStore();
@@ -41,7 +42,9 @@ function App() {
           {["createActivity", "manage/:id"].map((path, i) => (
             <Route key={i} path={path} element={<ActivityForm key={i} />} />
           ))}
-          <Route path="/errors" element={<TestErrors />}></Route>
+          <Route path="profiles/:username" element={<ProfilePage />} />
+          <Route path="/errors" element={<TestErrors />} />
+          <Route path="/server-error" element={<ServerError />} />
           <Route path="/server-error" element={<ServerError />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="*" element={<NotFound />} />
